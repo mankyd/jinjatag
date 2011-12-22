@@ -1,6 +1,8 @@
 from jinja2 import Environment, environmentfunction, nodes
 from jinja2.ext import Extension
 
+__all__ = ('TagRegistrar',)
+
 class _SimpleTagExt(Extension):
     def parse(self, parser):
         tag = parser.stream.next()
