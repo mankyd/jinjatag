@@ -35,4 +35,4 @@ The resulting output:
 
     myblock: contentsbar
 
-That's really all there is to it.
+That's really all there is to it. A simple_tag is expected to accept 0 or more arguments and return a string. A simple_block is expected to accept at least one argument which will be the its rendered body.
