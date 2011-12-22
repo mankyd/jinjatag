@@ -1,6 +1,8 @@
 from jinja2 import Environment, environmentfunction, nodes
 from jinja2.ext import Extension
 
+__all__ = ('TagRegistrar',)
+
 class _SimpleTagExt(Extension):
     def parse(self, parser):
         tag = parser.stream.next()
@@ -65,7 +67,7 @@ class TagRegistrar(object):
 
     def add_tag_ext(self, ext):
         if self.ext:
-            self.ext.evnt.add_extension(ext)
+            self.ext.env.add_extension(ext)
         else:
             self._tags.append(ext)
 
