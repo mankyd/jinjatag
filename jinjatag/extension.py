@@ -65,7 +65,7 @@ class TagRegistrar(object):
 
     def add_tag_ext(self, ext):
         if self.ext:
-            self.ext.evnt.add_extension(ext)
+            self.ext.env.add_extension(ext)
         else:
             self._tags.append(ext)
 

@@ -1,12 +1,15 @@
 import setuptools
 
+import jinjatag
+
 setuptools.setup(
     name = "jinjatag",
-    version = "0.1.1",
+    version = '.'.join(str(c) for c in jinjatag.__version__),
     author = "Dave Mankoff",
     author_email = "mankyd@gmail.com",
     description = "A library to make Jinja2 Extensions Easy",
     long_description = open("README.md").read(),
+    test_suite = 'jinjatag.tests.test_all',
     license = "GPLv3",
     url = "https://github.com/mankyd/jinjatag",
     install_requires=[
