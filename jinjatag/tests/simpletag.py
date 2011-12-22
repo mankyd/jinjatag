@@ -24,5 +24,5 @@ class SimpleTagTestCase(JinjaTagTestCase):
 
 def suite():
     suite = unittest.TestSuite()
-    #suite.addTest(unittest.makeSuite(SimpleTagTestCase))
+    suite.addTest(unittest.makeSuite(SimpleTagTestCase))
     return suite
