@@ -12,8 +12,6 @@ import extension
 __all__ = ('simple_tag', 'simple_block', 'multibody_block',)
 
 def simple_tag(name=None):
-    if callable(name):
-        return dec(name)
     def dec(func):
         tag_name = name if isinstance(name, basestring) else func.__name__
         cls = type(tag_name, (extension._SimpleTagExt,), {})
@@ -21,6 +19,8 @@ def simple_tag(name=None):
         cls.tag_func = staticmethod(func)
         extension._jinja_tags.add_tag_ext(cls)
         return func
+    if callable(name):
+        return dec(name)
     return dec
 
 def simple_block(name=None):
