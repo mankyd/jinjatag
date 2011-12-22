@@ -3,7 +3,6 @@ import unittest
 import jinjatag
 from jinjatag.tests import JinjaTagTestCase
 
-
 class SimpleTagTestCase(JinjaTagTestCase):
     @jinjatag.simple_tag()
     def st_simple_tag(x, y):
@@ -16,7 +15,6 @@ class SimpleTagTestCase(JinjaTagTestCase):
         jinjatag.simple_tag()(self.bound_simple_tag)
         tmpl = self.env.from_string(''' {% bound_simple_tag x=4 y=6 %} ''')
         self.assertEquals(tmpl.render(), ' test_bound (jinjatag.tests.simpletag.SimpleTagTestCase)4 ')
-
 
     def test_simple(self):
         tmpl = self.env.from_string(''' {% st_simple_tag x=4 y=6 %} ''')
