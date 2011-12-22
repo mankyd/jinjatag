@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name = "jinjatag",
-    version = "0.1",
+    version = "0.1.1",
     author = "Dave Mankoff",
     author_email = "mankyd@gmail.com",
     description = "A library to make Jinja2 Extensions Easy",

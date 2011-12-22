@@ -1,9 +1,6 @@
 from jinja2 import Environment, environmentfunction, nodes
 from jinja2.ext import Extension
 
-_simple_tags = {}
-_simple_blocks = {}
-
 class _SimpleTagExt(Extension):
     def parse(self, parser):
         tag = parser.stream.next()
@@ -31,7 +28,6 @@ class _SimpleBlockExt(Extension):
     def _call_simple_block(self, attrs, caller):
         return self.tag_func(caller(), **attrs)
 
-
 class JinjaTag(Extension):
     def __init__(self):
         pass
@@ -42,28 +38,7 @@ class JinjaTag(Extension):
         return self
 
     def init(self):
-        global _simple_tags
-        global _simple_blocks
-
-        for k, v in _simple_tags.items():
-            self.add_simple_tag_ext(k, v)
-        _simple_tags = SimpleTagRegistrar(self)
-
-        for k, v in _simple_blocks.items():
-            self.add_simple_block_ext(k, v)
-        _simple_blocks = SimpleBlockRegistrar(self)
-
-    def add_simple_tag_ext(self, tag_name, tag_func):
-        cls = type(tag_name.title(), (_SimpleTagExt,), {})
-        cls.tags = {tag_name}
-        cls.tag_func = staticmethod(tag_func)
-        self.env.add_extension(cls)
-
-    def add_simple_block_ext(self, tag_name, tag_func):
-        cls = type(tag_name.title(), (_SimpleBlockExt,), {})
-        cls.tags = {tag_name}
-        cls.tag_func = staticmethod(tag_func)
-        self.env.add_extension(cls)
+        _jinja_tags.set_base_ext(self)
 
     @classmethod
     def _parse_attrs(cls, parser, add_id=True):
@@ -78,16 +53,21 @@ class JinjaTag(Extension):
 
         return attrs
 
-class SimpleTagRegistrar(object):
-    def __init__(self, ext):
+class TagRegistrar(object):
+    def __init__(self):
+        self.ext = None
+        self._tags = []
+
+    def set_base_ext(self, ext):
         self.ext = ext
+        for tag_ext in self._tags:
+            self.ext.env.add_extension(tag_ext)
 
-    def __setitem__(self, key, value):
-        self.ext.add_simple_tag_ext(key, value)
+    def add_tag_ext(self, ext):
+        if self.ext:
+            self.ext.evnt.add_extension(ext)
+        else:
+            self._tags.append(ext)
 
-class SimpleBlockRegistrar(object):
-    def __init__(self, ext):
-        self.ext = ext
+_jinja_tags = TagRegistrar()
 
-    def __setitem__(self, key, value):
-        self.ext.add_simple_block_ext(key, value)
