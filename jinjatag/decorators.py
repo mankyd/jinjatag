@@ -11,43 +11,67 @@ import extension
 
 __all__ = ('simple_tag', 'simple_block', 'multibody_block',)
 
-def simple_tag(name=None):
-    def dec(func):
-        tag_name = name if isinstance(name, basestring) else func.__name__
-        cls = type(tag_name, (extension._SimpleTagExt,), {})
-        cls.tags = {tag_name}
-        cls.tag_func = staticmethod(func)
-        extension._jinja_tags.add_tag_ext(cls)
-        return func
-    if callable(name):
-        return dec(name)
-    return dec
+def create_extension_decorator(cls):
+    """
+    Class decorator that turns a class representing an Extension
+    into a decorator of the same name that registers the given class
+    with the jinja_tags registration.
+    It also adds 4 instance variables:
 
-def simple_block(name=None):
-    def dec(func):
-        tag_name = name if isinstance(name, basestring) else func.__name__
-        cls = type(tag_name, (extension._SimpleBlockExt,), {})
-        cls.tags = {tag_name}
-        cls.tag_func = staticmethod(func)
-        extension._jinja_tags.add_tag_ext(cls)
-        return func
-    if callable(name):
-        return dec(name)
-    return dec
+      - tags - The set of the tag_name
+      - tag_func - The function to dispatch to (wrapped by the decorator)
+      - decorator_args - Any extra args passed to the decorator
+      - decorator_kwargs - Any extra kwargs passed to the decorator
+    """
+    def outer_dec(name=None, *args, **kwargs):
+        def dec(func):
+            tag_name = name if isinstance(name, basestring) and name else func.__name__
+            new_cls = type(tag_name, (cls,), {
+                    'tags': set([tag_name]),
+                    'tag_func': staticmethod(func),
+                    'decorator_args': args,
+                    'decorator_kwargs': kwargs,
+                    })
+            extension._jinja_tags.add_tag_ext(new_cls)
+            return func
+        if callable(name):
+            return dec(name)
+        return dec
+    return outer_dec
 
-def multibody_block(name=None):
-    def dec(func):
-        tag_name = name if isinstance(name, basestring) else func.__name__
-        cls = type(tag_name, (_MultiBodyBlockExt,), {
-                'tags': {tag_name},
-                'tag_func': staticmethod(func)})
-        extension._jinja_tags.add_tag_ext(cls)
-        return func
-    if callable(name):
-        return dec(name)
-    return dec
 
-class _MultiBodyBlockExt(Extension):
+@create_extension_decorator
+class simple_tag(Extension):
+    def parse(self, parser):
+        tag = parser.stream.next()
+
+        attrs = extension.JinjaTag._parse_attrs(parser)
+        attrs = nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
+
+        return nodes.Output([self.call_method('_call_simple_tag', args=[attrs])])
+
+    def _call_simple_tag(self, attrs):
+        return self.tag_func(**attrs)
+
+@create_extension_decorator
+class simple_block(Extension):
+    def parse(self, parser):
+        tag = parser.stream.next()
+
+        attrs = extension.JinjaTag._parse_attrs(parser)
+        attrs = nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
+
+        body = parser.parse_statements(['name:end'+tag.value], drop_needle=True)
+
+        return [nodes.CallBlock(self.call_method('_call_simple_block', args=[attrs]),
+                                [], [], body).set_lineno(tag.lineno)]
+
+    def _call_simple_block(self, attrs, caller):
+        return self.tag_func(caller(), **attrs)
+
+
+@create_extension_decorator
+class multibody_block(Extension):
     def parse(self, parser):
         tag = parser.stream.next()
 

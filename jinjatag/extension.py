@@ -3,33 +3,6 @@ from jinja2.ext import Extension
 
 __all__ = ('TagRegistrar', 'JinjaTag',)
 
-class _SimpleTagExt(Extension):
-    def parse(self, parser):
-        tag = parser.stream.next()
-
-        attrs = JinjaTag._parse_attrs(parser)
-        attrs = nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
-
-        return nodes.Output([self.call_method('_call_simple_tag', args=[attrs])])
-
-    def _call_simple_tag(self, attrs):
-        return self.tag_func(**attrs)
-
-class _SimpleBlockExt(Extension):
-    def parse(self, parser):
-        tag = parser.stream.next()
-
-        attrs = JinjaTag._parse_attrs(parser)
-        attrs = nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
-
-        body = parser.parse_statements(['name:end'+tag.value], drop_needle=True)
-
-        return [nodes.CallBlock(self.call_method('_call_simple_block', args=[attrs]),
-                                [], [], body).set_lineno(tag.lineno)]
-
-    def _call_simple_block(self, attrs, caller):
-        return self.tag_func(caller(), **attrs)
-
 class JinjaTag(Extension):
     def __init__(self):
         pass
