@@ -7,13 +7,13 @@ Welcome to the JinjaTag documentation
 =======================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
 The jinjatag library makes it easy to take a python function and turn it
 into an extension for jinja2.
 
 The library provides a set of decorators for common tasks that can be
-sent to decorators.
+sent to simple python functions.
 
 See https://github.com/mankyd/jinjatag/ for source and issues.
 
@@ -82,6 +82,10 @@ Decorators
      def my_simple_tag(width, height=None):
          . . .
 
+    And this can be so used:
+
+     {% my_other_tag width=5 height=5*2 %}
+
 .. staticmethod:: jinjatag.simple_block(name=None)
                   jinjatag.simple_block(func)
 
@@ -113,4 +117,50 @@ Decorators
 .. staticmethod:: jinjatag.multibody_block(name=None)
                   jinjatag.multibody_block(func)
 
-    .. todo::
+    Sometimes the ``simple_block`` isn't enough---you want to be able to pull
+    in multiple block components and mix them to synthesize the result.
+    The ``multibody_block`` tag is what allows you to do this.
+
+    Once a multibody_block tag is defined with name ``NAME``, sub-blocks
+    can be defined within the main block with two additional tags::
+
+     {% NAME_block 'subblock_name' %}
+     {% NAME_end_block %}
+
+    The rendered output of the contents of the block will then be passed
+    as a keyword argument to the wrapped function. This is best described
+    with an example::
+
+     @jinjatag.multibody_block
+     def captioned_object(body, header, caption, width='auto'):
+         return '''<div class="captioned" style="width: {};">
+           <header>{}</header>
+           {}
+           <p class="caption">{}</p>
+         </div>'''.format(width, header, body, caption)
+
+    Then to use this block in template code, one has the option
+    of *either* using the keyword argument syntax as in ``simple_tag``
+    or create whole sub-blocks. For example::
+
+     {% captioned_object width='200px' %}
+       <img src="me.jpg">
+
+       {% captioned_object_block 'header' %}
+         Image
+       {% captioned_object_end_block %}
+
+       {% captioned_object_block 'footer' %}
+         Me on vacation
+       {% captioned_object_end_block %}
+
+     {% end_captioned_object %}
+
+    This will pass the arguments ``body, header, footer, and width`` to the
+    function. We could also put everything on one line::
+
+     {% captioned_object header='Image' footer='Me on vacation' width='200px' %}
+      <img src="me.jpg">
+     {% end_captioned_object %}
+
+    Note that to the function defined above, both templates are equivalent.
