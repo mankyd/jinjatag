@@ -112,6 +112,41 @@ expect:</p>
 </div>
 <p>The tag&#8217;s syntax is simple: every argument <em>must</em> be passed by name with
 no commas between them.</p>
+<p>To specify the name argument, simply pass it as the first argument
+when calling the decorator:</p>
+<div class="highlight-python"><pre>@jinjatag.simple_tag(name='my_other_tag')
+def my_simple_tag(width, height=None):
+    . . .</pre>
+</div>
+</dd></dl>
+
+<dl class="staticmethod">
+<dt id="jinjatag.simple_block">
+<em class="property">static </em><tt class="descclassname">jinjatag.</tt><tt class="descname">simple_block</tt><big>(</big><em>name=None</em><big>)</big><a class="headerlink" href="#jinjatag.simple_block" title="Permalink to this definition">¶</a></dt>
+<dt>
+<em class="property">static </em><tt class="descclassname">jinjatag.</tt><tt class="descname">simple_block</tt><big>(</big><em>func</em><big>)</big></dt>
+<dd><p>The <tt class="docutils literal"><span class="pre">simple_block</span></tt> decorator represents a single wrapped block of
+content. For instance, suppose we want to implement the block tag
+caesar cipher, which shifts every letter in the block by a defined
+amount. That tag might look like:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@jinjatag.simple_block</span>
+<span class="k">def</span> <span class="nf">caesar_cipher</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mi">13</span><span class="p">):</span>
+    <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">chr</span><span class="p">((</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="mi">96</span> <span class="o">+</span> <span class="n">shift</span><span class="p">)</span> <span class="o">%</span> <span class="mi">26</span> <span class="o">+</span> <span class="mi">96</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="k">else</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">body</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then to use it in a template, you would just have to write:</p>
+<div class="highlight-python"><pre>{% caesar_cipher shift=10 %}
+  the quick brown fox jumped over the lazy dog.
+  {% if 1 %}
+  raising elephants is so utterly boring.
+  {% endif %}
+{% end_caesar_cipher %}</pre>
+</div>
+<p>Note the use of &#8216;<a href="#id1"><span class="problematic" id="id2">end_</span></a>&#8216; to determine the endblock. Jinja2 convention
+does not use an underscore, so the simple_block allows you to choose
+which convention &#8212; both will work. If the tag contains an underscore,
+you will likely be more inclined to separate the end with an underscore.</p>
 </dd></dl>
 
 </div>

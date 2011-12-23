@@ -74,3 +74,38 @@ Decorators
 
     The tag's syntax is simple: every argument *must* be passed by name with
     no commas between them.
+
+    To specify the name argument, simply pass it as the first argument
+    when calling the decorator::
+
+     @jinjatag.simple_tag(name='my_other_tag')
+     def my_simple_tag(width, height=None):
+         . . .
+
+.. staticmethod:: jinjatag.simple_block(name=None)
+                  jinjatag.simple_block(func)
+
+    The ``simple_block`` decorator represents a single wrapped block of
+    content. For instance, suppose we want to implement the block tag
+    caesar cipher, which shifts every letter in the block by a defined
+    amount. That tag might look like::
+
+     @jinjatag.simple_block
+     def caesar_cipher(body, shift=13):
+         ''.join(chr((ord(c) - 96 + shift) % 26 + 96)
+                             if c.islower() else c for c in body)
+
+    Then to use it in a template, you would just have to write::
+
+     {% caesar_cipher shift=10 %}
+       the quick brown fox jumped over the lazy dog.
+       {% if 1 %}
+       raising elephants is so utterly boring.
+       {% endif %}
+     {% end_caesar_cipher %}
+
+    Note the use of 'end_' to determine the endblock. Jinja2 convention
+    does not use an underscore, so the simple_block allows you to choose
+    which convention --- both will work. If the tag contains an underscore,
+    you will likely be more inclined to separate the end with an underscore.
+
