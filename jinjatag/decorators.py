@@ -1,3 +1,7 @@
+import sys
+import inspect
+import traceback
+
 try:
     import plocal
 except ImportError:
@@ -6,6 +10,7 @@ except ImportError:
 from jinja2 import Environment, environmentfunction, nodes
 from jinja2.ext import Extension
 from jinja2.lexer import Token
+
 
 import extension
 
@@ -40,8 +45,27 @@ def create_extension_decorator(cls):
     return outer_dec
 
 
+class BaseExtension(Extension):
+    def call_tag_func(self, *args, **kwargs):
+        try:
+            return self.tag_func(*args, **kwargs)
+        except TypeError as e:
+            t, value, tb = sys.exc_info()
+            if len(traceback.extract_tb(tb, 2)) > 1:
+                raise
+            argspec = inspect.getargspec(self.tag_func)
+            arg_list = list(argspec.args)
+            if argspec.varargs:
+                arg_list.append('*' + argspec.varargs)
+            if argspec.keywords:
+                arg_list.append('**' + argspec.keywords)
+            raise TypeError("Failed to satisfy arguments for {}({}): provided ({}).".format(
+                    iter(self.tags).next(),
+                    ', '.join(arg_list),
+                    ', '.join([str(arg) for arg in args] + ['{}={}'.format(k, repr(v)) for k, v in kwargs.items()])))
+
 @create_extension_decorator
-class simple_tag(Extension):
+class simple_tag(BaseExtension):
     def parse(self, parser):
         tag = parser.stream.next()
 
@@ -51,10 +75,10 @@ class simple_tag(Extension):
         return nodes.Output([self.call_method('_call_simple_tag', args=[attrs])])
 
     def _call_simple_tag(self, attrs):
-        return self.tag_func(**attrs)
+        return self.call_tag_func(**attrs)
 
 @create_extension_decorator
-class simple_block(Extension):
+class simple_block(BaseExtension):
     def parse(self, parser):
         tag = parser.stream.next()
 
@@ -67,23 +91,33 @@ class simple_block(Extension):
                                 [], [], body).set_lineno(tag.lineno)]
 
     def _call_simple_block(self, attrs, caller):
-        return self.tag_func(caller(), **attrs)
+        return self.call_tag_func(caller(), **attrs)
 
 
 @create_extension_decorator
-class multibody_block(Extension):
+class multibody_block(BaseExtension):
     def parse(self, parser):
+        INSIDE_BLOCK, OUTSIDE_BLOCK = 0, 1
+
         tag = parser.stream.next()
 
-        end_tags = ['name:end' + tag.value,
-                    'name:end_' + tag.value,
-                    'name:{}_block'.format(tag.value),
-                    'name:{}_endblock'.format(tag.value),
-                    'name:{}_end_block'.format(tag.value),
-                    ]
+        end_tags_in_block = [
+            'name:{}_endblock'.format(tag.value),
+            'name:{}_end_block'.format(tag.value),
+            ]
+
+        end_tags_outside_block = [
+            'name:end' + tag.value,
+            'name:end_' + tag.value,
+            'name:{}_block'.format(tag.value),
+            ]
+
+        end_tags = (end_tags_in_block, end_tags_outside_block)
+
+        state = OUTSIDE_BLOCK
 
         attrs_ = extension.JinjaTag._parse_attrs(parser)
-        body = parser.parse_statements(end_tags, drop_needle=False)
+        body = parser.parse_statements(end_tags[state], drop_needle=False)
 
         node_list = []
 
@@ -91,22 +125,27 @@ class multibody_block(Extension):
             ('body', body, tag.lineno),
             ]
 
+
         while True:
             sub_tag = parser.stream.next()
             sub_tag_name = sub_tag.value
 
-            tag_index = end_tags.index('name:' + sub_tag_name)
+            tag_index = end_tags[state].index('name:' + sub_tag_name)
 
-            if tag_index < 2:
+            if state == OUTSIDE_BLOCK and tag_index < 2:
                 break
 
-            elif tag_index == 2:
+            elif state == OUTSIDE_BLOCK:
+                # entering new block
                 sub_block_name = parser.stream.next().value
-                body = parser.parse_statements(end_tags, drop_needle=False)
+                state = INSIDE_BLOCK
+                body = parser.parse_statements(end_tags[state], drop_needle=False)
                 blocks.append((sub_block_name, body, sub_tag.lineno))
 
             else:
-                parser.parse_statements(end_tags, drop_needle=False)
+                state = OUTSIDE_BLOCK
+                parser.parse_statements(end_tags[state], drop_needle=False)
+
 
         self.block_results = plocal.local()
         self.block_results.data = {}
@@ -131,7 +170,7 @@ class multibody_block(Extension):
         block_results = self.block_results.data
         self.block_results.data = {}
         attrs.update(block_results)
-        return self.tag_func(**attrs)
+        return self.call_tag_func(**attrs)
 
     @classmethod
     def to_node_dict(cls, d):
