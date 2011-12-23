@@ -92,8 +92,8 @@ Decorators
 
      @jinjatag.simple_block
      def caesar_cipher(body, shift=13):
-         ''.join(chr((ord(c) - 96 + shift) % 26 + 96)
-                             if c.islower() else c for c in body)
+         return ''.join(chr((ord(c) - 96 + shift) % 26 + 96)
+                        if c.islower() else c for c in body)
 
     Then to use it in a template, you would just have to write::
 
@@ -109,3 +109,8 @@ Decorators
     which convention --- both will work. If the tag contains an underscore,
     you will likely be more inclined to separate the end with an underscore.
 
+
+.. staticmethod:: jinjatag.multibody_block(name=None)
+                  jinjatag.multibody_block(func)
+
+    .. todo::

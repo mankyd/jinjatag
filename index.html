@@ -131,8 +131,8 @@ caesar cipher, which shifts every letter in the block by a defined
 amount. That tag might look like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="nd">@jinjatag.simple_block</span>
 <span class="k">def</span> <span class="nf">caesar_cipher</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">shift</span><span class="o">=</span><span class="mi">13</span><span class="p">):</span>
-    <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">chr</span><span class="p">((</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="mi">96</span> <span class="o">+</span> <span class="n">shift</span><span class="p">)</span> <span class="o">%</span> <span class="mi">26</span> <span class="o">+</span> <span class="mi">96</span><span class="p">)</span>
-                        <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="k">else</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">body</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">chr</span><span class="p">((</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="mi">96</span> <span class="o">+</span> <span class="n">shift</span><span class="p">)</span> <span class="o">%</span> <span class="mi">26</span> <span class="o">+</span> <span class="mi">96</span><span class="p">)</span>
+                   <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">islower</span><span class="p">()</span> <span class="k">else</span> <span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">body</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Then to use it in a template, you would just have to write:</p>
@@ -148,6 +148,13 @@ does not use an underscore, so the simple_block allows you to choose
 which convention &#8212; both will work. If the tag contains an underscore,
 you will likely be more inclined to separate the end with an underscore.</p>
 </dd></dl>
+
+<dl class="staticmethod">
+<dt id="jinjatag.multibody_block">
+<em class="property">static </em><tt class="descclassname">jinjatag.</tt><tt class="descname">multibody_block</tt><big>(</big><em>name=None</em><big>)</big><a class="headerlink" href="#jinjatag.multibody_block" title="Permalink to this definition">¶</a></dt>
+<dt>
+<em class="property">static </em><tt class="descclassname">jinjatag.</tt><tt class="descname">multibody_block</tt><big>(</big><em>func</em><big>)</big></dt>
+<dd></dd></dl>
 
 </div>
 </div>
