@@ -36,3 +36,34 @@ The resulting output:
     myblock: contentsbar
 
 That's really all there is to it. A simple_tag is expected to accept 0 or more arguments and return a string. A simple_block is expected to accept at least one argument which will be the its rendered body.
+
+
+Install
+-------
+
+The module is registered with pypi, so simply use:
+
+    easy_install jinjatag
+
+or, if you're so inclined:
+
+    pip install jinjatag
+
+
+Further Documentation
+----------------------
+
+More documentation is available at http://mankyd.github.com/jinjatag/
+
+Also, tests are available in https://github.com/mankyd/jinjatag/tree/master/jinjatag/tests
+
+
+License
+--------
+
+GPL v3
+
+Author
+-------
+
+Dave Mankoff
