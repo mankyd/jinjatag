@@ -49,7 +49,7 @@
 <p>The jinjatag library makes it easy to take a python function and turn it
 into an extension for jinja2.</p>
 <p>The library provides a set of decorators for common tasks that can be
-sent to decorators.</p>
+sent to simple python functions.</p>
 <p>See <a class="reference external" href="https://github.com/mankyd/jinjatag/">https://github.com/mankyd/jinjatag/</a> for source and issues.</p>
 <div class="section" id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
@@ -118,6 +118,9 @@ when calling the decorator:</p>
 def my_simple_tag(width, height=None):
     . . .</pre>
 </div>
+<p>And this can be so used:</p>
+<blockquote>
+{% my_other_tag width=5 height=5*2 %}</blockquote>
 </dd></dl>
 
 <dl class="staticmethod">
@@ -154,7 +157,50 @@ you will likely be more inclined to separate the end with an underscore.</p>
 <em class="property">static </em><tt class="descclassname">jinjatag.</tt><tt class="descname">multibody_block</tt><big>(</big><em>name=None</em><big>)</big><a class="headerlink" href="#jinjatag.multibody_block" title="Permalink to this definition">¶</a></dt>
 <dt>
 <em class="property">static </em><tt class="descclassname">jinjatag.</tt><tt class="descname">multibody_block</tt><big>(</big><em>func</em><big>)</big></dt>
-<dd></dd></dl>
+<dd><p>Sometimes the <tt class="docutils literal"><span class="pre">simple_block</span></tt> isn&#8217;t enough&#8212;you want to be able to pull
+in multiple block components and mix them to synthesize the result.
+The <tt class="docutils literal"><span class="pre">multibody_block</span></tt> tag is what allows you to do this.</p>
+<p>Once a multibody_block tag is defined with name <tt class="docutils literal"><span class="pre">NAME</span></tt>, sub-blocks
+can be defined within the main block with two additional tags:</p>
+<div class="highlight-python"><pre>{% NAME_block 'subblock_name' %}
+{% NAME_end_block %}</pre>
+</div>
+<p>The rendered output of the contents of the block will then be passed
+as a keyword argument to the wrapped function. This is best described
+with an example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="nd">@jinjatag.multibody_block</span>
+<span class="k">def</span> <span class="nf">captioned_object</span><span class="p">(</span><span class="n">body</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">caption</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s">&#39;auto&#39;</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">&#39;&#39;&#39;&lt;div class=&quot;captioned&quot; style=&quot;width: {};&quot;&gt;</span>
+<span class="s">      &lt;header&gt;{}&lt;/header&gt;</span>
+<span class="s">      {}</span>
+<span class="s">      &lt;p class=&quot;caption&quot;&gt;{}&lt;/p&gt;</span>
+<span class="s">    &lt;/div&gt;&#39;&#39;&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">header</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">caption</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then to use this block in template code, one has the option
+of <em>either</em> using the keyword argument syntax as in <tt class="docutils literal"><span class="pre">simple_tag</span></tt>
+or create whole sub-blocks. For example:</p>
+<div class="highlight-python"><pre>{% captioned_object width='200px' %}
+  &lt;img src="me.jpg"&gt;
+
+  {% captioned_object_block 'header' %}
+    Image
+  {% captioned_object_end_block %}
+
+  {% captioned_object_block 'footer' %}
+    Me on vacation
+  {% captioned_object_end_block %}
+
+{% end_captioned_object %}</pre>
+</div>
+<p>This will pass the arguments <tt class="docutils literal"><span class="pre">body,</span> <span class="pre">header,</span> <span class="pre">footer,</span> <span class="pre">and</span> <span class="pre">width</span></tt> to the
+function. We could also put everything on one line:</p>
+<div class="highlight-python"><pre>{% captioned_object header='Image' footer='Me on vacation' width='200px' %}
+ &lt;img src="me.jpg"&gt;
+{% end_captioned_object %}</pre>
+</div>
+<p>Note that to the function defined above, both templates are equivalent.</p>
+</dd></dl>
 
 </div>
 </div>
