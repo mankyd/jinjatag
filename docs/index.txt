@@ -1,0 +1,47 @@
+.. Python jinjatag documentation master file, created by
+   sphinx-quickstart on Wed Mar 31 16:25:58 2010.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to the JinjaTag documentation
+=======================================
+
+.. toctree::
+   :maxdepth: 2
+
+Introduction
+============
+
+The jinjatag library makes it easy to take a python function and turn it
+into an extension for jinja2.
+
+The library provides a set of decorators for common tasks that can be
+sent to decorators.
+
+See https://github.com/mankyd/jinjatag/ for source and issues.
+
+Module Contents
+===============
+
+.. :py:class:: jinjatag.JinjaTag
+
+   The ``JinjaTag`` extension that needs to be registered with the jinja2
+   environment to enable all of the decorated functions. You must register
+   an instance of this with your jinja2 environment to use. For example::
+
+    >>> import jinjatag
+    >>> jinja_tag = jinjatag.JinjaTag()
+    >>> jinja2_env = Environment(extensions=[jinja_tag])
+    >>> jinja_tag.init()
+
+   .. CAUTION::
+      Use only one JinjaTag instance per jinja2 environment.
+
+.. method:: JinjaTag.init()
+
+   This method of JinjaTag will complete the decorator registration with
+   jinja2. This must be called on the JinjaTag instance after adding it
+   to the jinja2 environment but before any template is compiled/rendered.
+   Must be called *after* registering the ``JinjaTag`` instance with jinja2.
+   Running ``init`` before registering with the jinja2 environment will break.
+
