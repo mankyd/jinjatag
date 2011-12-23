@@ -45,7 +45,20 @@ def create_extension_decorator(cls):
     return outer_dec
 
 
-class BaseExtension(Extension):
+class BaseTag(Extension):
+    def parse_attrs(self, parser, add_id=True):
+        attrs = {}
+        while parser.stream.current.type != 'block_end':
+            node = parser.parse_assign_target(with_tuple=False)
+
+            if parser.stream.skip_if('assign'):
+                attrs[node.name] = parser.parse_expression()
+            else:
+                attrs[node.name] = nodes.Const(node.name)
+
+        return attrs
+
+
     def call_tag_func(self, *args, **kwargs):
         try:
             return self.tag_func(*args, **kwargs)
@@ -65,11 +78,11 @@ class BaseExtension(Extension):
                     ', '.join([str(arg) for arg in args] + ['{}={}'.format(k, repr(v)) for k, v in kwargs.items()])))
 
 @create_extension_decorator
-class simple_tag(BaseExtension):
+class simple_tag(BaseTag):
     def parse(self, parser):
         tag = parser.stream.next()
 
-        attrs = extension.JinjaTag._parse_attrs(parser)
+        attrs = self.parse_attrs(parser)
         attrs = nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
 
         return nodes.Output([self.call_method('_call_simple_tag', args=[attrs])])
@@ -78,11 +91,11 @@ class simple_tag(BaseExtension):
         return self.call_tag_func(**attrs)
 
 @create_extension_decorator
-class simple_block(BaseExtension):
+class simple_block(BaseTag):
     def parse(self, parser):
         tag = parser.stream.next()
 
-        attrs = extension.JinjaTag._parse_attrs(parser)
+        attrs = self.parse_attrs(parser)
         attrs = nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
 
         body = parser.parse_statements(['name:end'+tag.value], drop_needle=True)
@@ -95,7 +108,7 @@ class simple_block(BaseExtension):
 
 
 @create_extension_decorator
-class multibody_block(BaseExtension):
+class multibody_block(BaseTag):
     def parse(self, parser):
         INSIDE_BLOCK, OUTSIDE_BLOCK = 0, 1
 
@@ -116,7 +129,7 @@ class multibody_block(BaseExtension):
 
         state = OUTSIDE_BLOCK
 
-        attrs_ = extension.JinjaTag._parse_attrs(parser)
+        attrs_ = self.parse_attrs(parser)
         body = parser.parse_statements(end_tags[state], drop_needle=False)
 
         node_list = []

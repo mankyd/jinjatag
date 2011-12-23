@@ -1,4 +1,4 @@
-from jinja2 import Environment, environmentfunction, nodes
+from jinja2 import Environment
 from jinja2.ext import Extension
 
 __all__ = ('TagRegistrar', 'JinjaTag',)
@@ -14,19 +14,6 @@ class JinjaTag(Extension):
 
     def init(self):
         _jinja_tags.set_base_ext(self)
-
-    @classmethod
-    def _parse_attrs(cls, parser, add_id=True):
-        attrs = {}
-        while parser.stream.current.type != 'block_end':
-            node = parser.parse_assign_target(with_tuple=False)
-
-            if parser.stream.skip_if('assign'):
-                attrs[node.name] = parser.parse_expression()
-            else:
-                attrs[node.name] = nodes.Const(node.name)
-
-        return attrs
 
 class TagRegistrar(object):
     def __init__(self):
