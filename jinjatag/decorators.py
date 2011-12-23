@@ -98,7 +98,8 @@ class simple_block(BaseTag):
         attrs = self.parse_attrs(parser)
         attrs = nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
 
-        body = parser.parse_statements(['name:end'+tag.value], drop_needle=True)
+        end_tags = ['name:end' + tag.value, 'name:end_' + tag.value]
+        body = parser.parse_statements(end_tags, drop_needle=True)
 
         return [nodes.CallBlock(self.call_method('_call_simple_block', args=[attrs]),
                                 [], [], body).set_lineno(tag.lineno)]
