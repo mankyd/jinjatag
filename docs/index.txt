@@ -23,12 +23,13 @@ See https://github.com/mankyd/jinjatag/ for source and issues.
 Module Contents
 ===============
 
-.. :py:class:: jinjatag.JinjaTag
+.. class:: jinjatag.JinjaTag()
 
    The ``JinjaTag`` extension that needs to be registered with the jinja2
    environment to enable all of the decorated functions. You must register
    an instance of this with your jinja2 environment to use. For example::
 
+    .. code:: python
     >>> import jinjatag
     >>> jinja_tag = jinjatag.JinjaTag()
     >>> jinja2_env = Environment(extensions=[jinja_tag])
