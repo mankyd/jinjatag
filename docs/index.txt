@@ -9,9 +9,6 @@ Welcome to the JinjaTag documentation
 .. toctree::
    :maxdepth: 2
 
-Introduction
--------------
-
 The jinjatag library makes it easy to take a python function and turn it
 into an extension for jinja2.
 
@@ -51,10 +48,8 @@ JinjaTag Extension
 Decorators
 ~~~~~~~~~~~~
 
-__all__ = ('simple_tag', 'simple_block', 'multibody_block',)
-
-.. decorator:: jinjatag.simple_tag(name=None)
-               jinjatag.simple_tag(func)
+.. staticmethod:: jinjatag.simple_tag(name=None)
+                  jinjatag.simple_tag(func)
 
     This decorator wraps a single function to produce a simple tag that
     can be called in any template using the jinja2 environment registered
