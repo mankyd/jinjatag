@@ -10,7 +10,7 @@ Welcome to the JinjaTag documentation
    :maxdepth: 2
 
 Introduction
-============
+-------------
 
 The jinjatag library makes it easy to take a python function and turn it
 into an extension for jinja2.
@@ -21,7 +21,10 @@ sent to decorators.
 See https://github.com/mankyd/jinjatag/ for source and issues.
 
 Module Contents
-===============
+---------------
+
+JinjaTag Extension
+~~~~~~~~~~~~~~~~~~
 
 .. class:: jinjatag.JinjaTag()
 
@@ -29,7 +32,6 @@ Module Contents
    environment to enable all of the decorated functions. You must register
    an instance of this with your jinja2 environment to use. For example::
 
-    .. code:: python
     >>> import jinjatag
     >>> jinja_tag = jinjatag.JinjaTag()
     >>> jinja2_env = Environment(extensions=[jinja_tag])
@@ -46,3 +48,34 @@ Module Contents
    Must be called *after* registering the ``JinjaTag`` instance with jinja2.
    Running ``init`` before registering with the jinja2 environment will break.
 
+Decorators
+~~~~~~~~~~~~
+
+__all__ = ('simple_tag', 'simple_block', 'multibody_block',)
+
+.. decorator:: jinjatag.simple_tag(name=None)
+               jinjatag.simple_tag(func)
+
+    This decorator wraps a single function to produce a simple tag that
+    can be called in any template using the jinja2 environment registered
+    above.
+
+    The name for the tag can either be specified as the name argument or taken
+    as the name of the wrapped function. In the simplest form, you can
+    just put ``@jinjatag.simple_tag`` at the top of your function and just
+    use it as a macro::
+
+     import jinjatag
+
+     @jinjatag.simple_tag
+     def my_simple_tag(width, height=None):
+         height = width if height is None else height
+         return '<br>'.join('=' * width for _ in range(height))
+
+    In the jinja2 template, just call the ``my_simple_tag`` as you might
+    expect::
+
+     {% my_simple_tag width=5 height=5*2 %}
+
+    The tag's syntax is simple: every argument *must* be passed by name with
+    no commas between them.

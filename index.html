@@ -46,9 +46,8 @@
 <ul class="simple">
 </ul>
 </div>
-</div>
 <div class="section" id="introduction">
-<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>The jinjatag library makes it easy to take a python function and turn it
 into an extension for jinja2.</p>
 <p>The library provides a set of decorators for common tasks that can be
@@ -56,18 +55,20 @@ sent to decorators.</p>
 <p>See <a class="reference external" href="https://github.com/mankyd/jinjatag/">https://github.com/mankyd/jinjatag/</a> for source and issues.</p>
 </div>
 <div class="section" id="module-contents">
-<h1>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h1>
+<h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="jinjatag-extension">
+<h3>JinjaTag Extension<a class="headerlink" href="#jinjatag-extension" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
 <dt id="jinjatag.JinjaTag">
 <em class="property">class </em><tt class="descclassname">jinjatag.</tt><tt class="descname">JinjaTag</tt><a class="headerlink" href="#jinjatag.JinjaTag" title="Permalink to this definition">¶</a></dt>
 <dd><p>The <tt class="docutils literal"><span class="pre">JinjaTag</span></tt> extension that needs to be registered with the jinja2
 environment to enable all of the decorated functions. You must register
 an instance of this with your jinja2 environment to use. For example:</p>
-<div class="highlight-python"><pre>.. code:: python
-&gt;&gt;&gt; import jinjatag
-&gt;&gt;&gt; jinja_tag = jinjatag.JinjaTag()
-&gt;&gt;&gt; jinja2_env = Environment(extensions=[jinja_tag])
-&gt;&gt;&gt; jinja_tag.init()</pre>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">jinjatag</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jinja_tag</span> <span class="o">=</span> <span class="n">jinjatag</span><span class="o">.</span><span class="n">JinjaTag</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jinja2_env</span> <span class="o">=</span> <span class="n">Environment</span><span class="p">(</span><span class="n">extensions</span><span class="o">=</span><span class="p">[</span><span class="n">jinja_tag</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">jinja_tag</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+</pre></div>
 </div>
 <div class="admonition caution">
 <p class="first admonition-title">Caution</p>
@@ -86,6 +87,12 @@ Running <tt class="docutils literal"><span class="pre">init</span></tt> before r
 </dd></dl>
 
 </div>
+<div class="section" id="decorators">
+<h3>Decorators<a class="headerlink" href="#decorators" title="Permalink to this headline">¶</a></h3>
+<p>__all__ = (&#8216;simple_tag&#8217;, &#8216;simple_block&#8217;, &#8216;multibody_block&#8217;,)</p>
+</div>
+</div>
+</div>
 
 
           </div>
@@ -96,10 +103,14 @@ Running <tt class="docutils literal"><span class="pre">init</span></tt> before r
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to the JinjaTag documentation</a><ul>
+<li><a class="reference internal" href="#introduction">Introduction</a></li>
+<li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
+<li><a class="reference internal" href="#jinjatag-extension">JinjaTag Extension</a></li>
+<li><a class="reference internal" href="#decorators">Decorators</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#introduction">Introduction</a></li>
-<li><a class="reference internal" href="#module-contents">Module Contents</a></li>
+</ul>
+</li>
 </ul>
 
   <h3>This Page</h3>
