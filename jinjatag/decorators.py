@@ -135,7 +135,7 @@ class multibody_block(BaseTag):
         node_list = []
 
         blocks = [
-            ('body', body, tag.lineno),
+            (nodes.Const('body'), body, tag.lineno),
             ]
 
 
@@ -150,7 +150,7 @@ class multibody_block(BaseTag):
 
             elif state == OUTSIDE_BLOCK:
                 # entering new block
-                sub_block_name = parser.stream.next().value
+                sub_block_name = parser.parse_expression()
                 state = INSIDE_BLOCK
                 body = parser.parse_statements(end_tags[state], drop_needle=False)
                 blocks.append((sub_block_name, body, sub_tag.lineno))
@@ -164,7 +164,7 @@ class multibody_block(BaseTag):
         self.block_results.data = {}
 
         node_list = [
-            nodes.CallBlock(self.call_method('_subblock', args=[nodes.Const(block_name)]),
+            nodes.CallBlock(self.call_method('_subblock', args=[block_name]),
                             [], [], block).set_lineno(lineno)
             for block_name, block, lineno in blocks
             ]
@@ -176,7 +176,7 @@ class multibody_block(BaseTag):
         return node_list
 
     def _subblock(self, block_name, caller):
-        self.block_results.data[block_name] = caller()
+        self.block_results.data[str(block_name)] = caller()
         return ''
 
     def _call_multiblock_tag(self, attrs):

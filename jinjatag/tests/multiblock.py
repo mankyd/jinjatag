@@ -75,6 +75,13 @@ body
         self.assertRaises(TypeError,
                           self.env.from_string('{% mbb_missing_param %} {% end_mbb_missing_param %}').render)
 
+    @jinjatag.multibody_block
+    def mbb_dynamic_block_names(**kwargs):
+        return str(kwargs)
+
+    def test_dynamic_block_names(self):
+        tmpl = self.env.from_string('{% mbb_dynamic_block_names x="foo" %} {% mbb_dynamic_block_names_block i + 3 %}foo{% mbb_dynamic_block_names_end_block %}{% end_mbb_dynamic_block_names %}')
+        self.assertEquals(tmpl.render({'i': 4}), "{'body': u' ', 'x': 'foo', '7': u'foo'}")
 
 def suite():
     suite = unittest.TestSuite()
