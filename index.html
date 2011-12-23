@@ -57,6 +57,24 @@ sent to decorators.</p>
 </div>
 <div class="section" id="module-contents">
 <h1>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="jinjatag.JinjaTag">
+<em class="property">class </em><tt class="descclassname">jinjatag.</tt><tt class="descname">JinjaTag</tt><a class="headerlink" href="#jinjatag.JinjaTag" title="Permalink to this definition">¶</a></dt>
+<dd><p>The <tt class="docutils literal"><span class="pre">JinjaTag</span></tt> extension that needs to be registered with the jinja2
+environment to enable all of the decorated functions. You must register
+an instance of this with your jinja2 environment to use. For example:</p>
+<div class="highlight-python"><pre>.. code:: python
+&gt;&gt;&gt; import jinjatag
+&gt;&gt;&gt; jinja_tag = jinjatag.JinjaTag()
+&gt;&gt;&gt; jinja2_env = Environment(extensions=[jinja_tag])
+&gt;&gt;&gt; jinja_tag.init()</pre>
+</div>
+<div class="admonition caution">
+<p class="first admonition-title">Caution</p>
+<p class="last">Use only one JinjaTag instance per jinja2 environment.</p>
+</div>
+</dd></dl>
+
 <dl class="method">
 <dt id="JinjaTag.init">
 <tt class="descclassname">JinjaTag.</tt><tt class="descname">init</tt><big>(</big><big>)</big><a class="headerlink" href="#JinjaTag.init" title="Permalink to this definition">¶</a></dt>
