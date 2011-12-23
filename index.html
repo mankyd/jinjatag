@@ -46,14 +46,11 @@
 <ul class="simple">
 </ul>
 </div>
-<div class="section" id="introduction">
-<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>The jinjatag library makes it easy to take a python function and turn it
 into an extension for jinja2.</p>
 <p>The library provides a set of decorators for common tasks that can be
 sent to decorators.</p>
 <p>See <a class="reference external" href="https://github.com/mankyd/jinjatag/">https://github.com/mankyd/jinjatag/</a> for source and issues.</p>
-</div>
 <div class="section" id="module-contents">
 <h2>Module Contents<a class="headerlink" href="#module-contents" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="jinjatag-extension">
@@ -89,7 +86,34 @@ Running <tt class="docutils literal"><span class="pre">init</span></tt> before r
 </div>
 <div class="section" id="decorators">
 <h3>Decorators<a class="headerlink" href="#decorators" title="Permalink to this headline">¶</a></h3>
-<p>__all__ = (&#8216;simple_tag&#8217;, &#8216;simple_block&#8217;, &#8216;multibody_block&#8217;,)</p>
+<dl class="staticmethod">
+<dt id="jinjatag.simple_tag">
+<em class="property">static </em><tt class="descclassname">jinjatag.</tt><tt class="descname">simple_tag</tt><big>(</big><em>name=None</em><big>)</big><a class="headerlink" href="#jinjatag.simple_tag" title="Permalink to this definition">¶</a></dt>
+<dt>
+<em class="property">static </em><tt class="descclassname">jinjatag.</tt><tt class="descname">simple_tag</tt><big>(</big><em>func</em><big>)</big></dt>
+<dd><p>This decorator wraps a single function to produce a simple tag that
+can be called in any template using the jinja2 environment registered
+above.</p>
+<p>The name for the tag can either be specified as the name argument or taken
+as the name of the wrapped function. In the simplest form, you can
+just put <tt class="docutils literal"><span class="pre">&#64;jinjatag.simple_tag</span></tt> at the top of your function and just
+use it as a macro:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">jinjatag</span>
+
+<span class="nd">@jinjatag.simple_tag</span>
+<span class="k">def</span> <span class="nf">my_simple_tag</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">width</span> <span class="k">if</span> <span class="n">height</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">height</span>
+    <span class="k">return</span> <span class="s">&#39;&lt;br&gt;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s">&#39;=&#39;</span> <span class="o">*</span> <span class="n">width</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">height</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>In the jinja2 template, just call the <tt class="docutils literal"><span class="pre">my_simple_tag</span></tt> as you might
+expect:</p>
+<div class="highlight-python"><pre>{% my_simple_tag width=5 height=5*2 %}</pre>
+</div>
+<p>The tag&#8217;s syntax is simple: every argument <em>must</em> be passed by name with
+no commas between them.</p>
+</dd></dl>
+
 </div>
 </div>
 </div>
@@ -103,7 +127,6 @@ Running <tt class="docutils literal"><span class="pre">init</span></tt> before r
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Welcome to the JinjaTag documentation</a><ul>
-<li><a class="reference internal" href="#introduction">Introduction</a></li>
 <li><a class="reference internal" href="#module-contents">Module Contents</a><ul>
 <li><a class="reference internal" href="#jinjatag-extension">JinjaTag Extension</a></li>
 <li><a class="reference internal" href="#decorators">Decorators</a></li>
