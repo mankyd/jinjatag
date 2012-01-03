@@ -1,6 +1,16 @@
+import sys
 import setuptools
 
 import jinjatag
+
+requirements = [
+    "jinja2>=2.5",
+    ]
+
+# Require the external importlib package if python 2.6
+version_tuple = sys.version_info
+if version_tuple[0] < 3 and version_tuple[1] < 7:
+    requirements.append('importlib')
 
 setuptools.setup(
     name = "jinjatag",
@@ -12,9 +22,7 @@ setuptools.setup(
     test_suite = 'jinjatag.tests.test_all',
     license = "GPLv3",
     url = "https://github.com/mankyd/jinjatag",
-    install_requires=[
-        "jinja2>=2.5",
-        ],
+    install_requires=requirements,
     packages = [
         "jinjatag",
     ],
