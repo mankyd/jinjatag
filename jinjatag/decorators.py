@@ -55,9 +55,7 @@ class BaseTag(Extension):
                 attrs[node.name] = parser.parse_expression()
             else:
                 attrs[node.name] = nodes.Const(node.name)
-
-        return attrs
-
+        return nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
 
     def call_tag_func(self, *args, **kwargs):
         try:
@@ -83,7 +81,6 @@ class simple_tag(BaseTag):
         tag = parser.stream.next()
 
         attrs = self.parse_attrs(parser)
-        attrs = nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
 
         return nodes.Output([self.call_method('_call_simple_tag', args=[attrs])])
 
@@ -96,7 +93,6 @@ class simple_block(BaseTag):
         tag = parser.stream.next()
 
         attrs = self.parse_attrs(parser)
-        attrs = nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
 
         end_tags = ['name:end' + tag.value, 'name:end_' + tag.value]
         body = parser.parse_statements(end_tags, drop_needle=True)
@@ -130,7 +126,7 @@ class multibody_block(BaseTag):
 
         state = OUTSIDE_BLOCK
 
-        attrs_ = self.parse_attrs(parser)
+        attrs = self.parse_attrs(parser)
         body = parser.parse_statements(end_tags[state], drop_needle=False)
 
         node_list = []
@@ -170,8 +166,6 @@ class multibody_block(BaseTag):
             for block_name, block, lineno in blocks
             ]
 
-        attrs = self.to_node_dict(attrs_)
-
         node_list.append(nodes.Output([self.call_method('_call_multiblock_tag', args=[attrs])]))
 
         return node_list
@@ -186,6 +180,4 @@ class multibody_block(BaseTag):
         attrs.update(block_results)
         return self.call_tag_func(**attrs)
 
-    @classmethod
-    def to_node_dict(cls, d):
-        return nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in d.items()])
+
