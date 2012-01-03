@@ -73,7 +73,7 @@ class BaseTag(Extension):
             raise TypeError("Failed to satisfy arguments for {0}({1}): provided ({2}).".format(
                     iter(self.tags).next(),
                     ', '.join(arg_list),
-                    ', '.join([str(arg) for arg in args] + ['{0}={1}'.format(k, repr(v)) for k, v in kwargs.items()])))
+                    ', '.join([repr(arg) for arg in args] + ['{0}={1}'.format(k, repr(v)) for k, v in kwargs.items()])))
 
     @property
     def local_env(self):
