@@ -75,6 +75,21 @@ class BaseTag(Extension):
                     ', '.join(arg_list),
                     ', '.join([str(arg) for arg in args] + ['{0}={1}'.format(k, repr(v)) for k, v in kwargs.items()])))
 
+    @property
+    def local_env(self):
+        " A thread save dictionary to store data for a particular tag. "
+        if not hasattr(self, '_local_env'):
+            self._local_env = plocal.local()
+        if not hasattr(self._local_env, 'env'):
+            self._local_env.env = {}
+        return self._local_env.env
+
+    @local_env.setter
+    def local_env(self, value):
+        if not hasattr(self, '_local_env'):
+            self._local_env = plocal.local()
+        self._local_env.env = value
+
 @create_extension_decorator
 class simple_tag(BaseTag):
     def parse(self, parser):
@@ -157,9 +172,6 @@ class multibody_block(BaseTag):
                 parser.parse_statements(end_tags[state], drop_needle=False)
 
 
-        self.block_results = plocal.local()
-        self.block_results.data = {}
-
         node_list = [
             nodes.CallBlock(self.call_method('_subblock', args=[block_name]),
                             [], [], block).set_lineno(lineno)
@@ -171,13 +183,12 @@ class multibody_block(BaseTag):
         return node_list
 
     def _subblock(self, block_name, caller):
-        self.block_results.data[str(block_name)] = caller()
+        self.local_env[str(block_name)] = caller()
         return ''
 
     def _call_multiblock_tag(self, attrs):
-        block_results = self.block_results.data
-        self.block_results.data = {}
-        attrs.update(block_results)
+        attrs.update(self.local_env)
+        self.local_env = {}
         return self.call_tag_func(**attrs)
 
 
