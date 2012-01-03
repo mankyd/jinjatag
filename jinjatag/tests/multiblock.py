@@ -11,9 +11,14 @@ class MultiBlockTagTestCase(JinjaTagTestCase):
     def mbb_simple(body, header, footer, x=None, y=None):
         return '<h1>{0}</h1>x={1}, y={2}<br> {3} <footer>{4}</footer>'.format(header, x, y, body, footer)
 
+    @jinjatag.multibody_block
+    def mbb_single(body, x=None, y=None):
+        return 'x={0}, y={1}<br> {2}'.format(x, y, body)
+
     def test_mbb_simple(self):
         tmpl = self.env.from_string('''
-{% mbb_simple x="foo" y="bar" %}
+{% set x_val="foo" -%}
+{% mbb_simple x=x_val y="bar" %}
 
  this is the random body
 
@@ -29,6 +34,17 @@ class MultiBlockTagTestCase(JinjaTagTestCase):
 
 '''.strip())
         self.assertEquals(tmpl.render(), '<h1>\n   this is the header\n </h1>x=foo, y=bar<br> \n\n this is the random body\n\n  <footer>\n   this is the footer\n </footer>')
+
+    def test_mbb_single(self):
+        tmpl = self.env.from_string('''
+{% mbb_single x="foo" y="bar" %}
+
+ this is the random body
+
+{% end_mbb_single %}
+
+'''.strip())
+        self.assertEquals(tmpl.render(), 'x=foo, y=bar<br> \n\n this is the random body\n\n')
 
     def test_mbb_simple_errors(self):
         # for loop outside inner block

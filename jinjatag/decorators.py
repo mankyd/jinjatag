@@ -188,4 +188,4 @@ class multibody_block(BaseTag):
 
     @classmethod
     def to_node_dict(cls, d):
-        return nodes.Dict([nodes.Pair(nodes.Const(k), v if isinstance(v, nodes.Const) else nodes.Const(v)) for k,v in d.items()])
+        return nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in d.items()])
