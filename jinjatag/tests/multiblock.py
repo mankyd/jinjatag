@@ -9,7 +9,7 @@ from jinjatag.tests import JinjaTagTestCase
 class MultiBlockTagTestCase(JinjaTagTestCase):
     @jinjatag.multibody_block
     def mbb_simple(body, header, footer, x=None, y=None):
-        return '<h1>{}</h1>x={}, y={}<br> {} <footer>{}</footer>'.format(header, x, y, body, footer)
+        return '<h1>{0}</h1>x={1}, y={2}<br> {3} <footer>{4}</footer>'.format(header, x, y, body, footer)
 
     def test_mbb_simple(self):
         tmpl = self.env.from_string('''

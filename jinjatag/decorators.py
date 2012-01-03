@@ -72,10 +72,10 @@ class BaseTag(Extension):
                 arg_list.append('*' + argspec.varargs)
             if argspec.keywords:
                 arg_list.append('**' + argspec.keywords)
-            raise TypeError("Failed to satisfy arguments for {}({}): provided ({}).".format(
+            raise TypeError("Failed to satisfy arguments for {0}({1}): provided ({2}).".format(
                     iter(self.tags).next(),
                     ', '.join(arg_list),
-                    ', '.join([str(arg) for arg in args] + ['{}={}'.format(k, repr(v)) for k, v in kwargs.items()])))
+                    ', '.join([str(arg) for arg in args] + ['{0}={1}'.format(k, repr(v)) for k, v in kwargs.items()])))
 
 @create_extension_decorator
 class simple_tag(BaseTag):
@@ -116,14 +116,14 @@ class multibody_block(BaseTag):
         tag = parser.stream.next()
 
         end_tags_in_block = [
-            'name:{}_endblock'.format(tag.value),
-            'name:{}_end_block'.format(tag.value),
+            'name:{0}_endblock'.format(tag.value),
+            'name:{0}_end_block'.format(tag.value),
             ]
 
         end_tags_outside_block = [
             'name:end' + tag.value,
             'name:end_' + tag.value,
-            'name:{}_block'.format(tag.value),
+            'name:{0}_block'.format(tag.value),
             ]
 
         end_tags = (end_tags_in_block, end_tags_outside_block)
