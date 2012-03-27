@@ -14,7 +14,7 @@ from jinja2.lexer import Token
 
 import extension
 
-__all__ = ('simple_tag', 'simple_block', 'multibody_block',)
+__all__ = ('simple_tag', 'simple_block', 'multibody_block', 'simple_context_tag',)
 
 def create_extension_decorator(cls):
     """
@@ -46,7 +46,7 @@ def create_extension_decorator(cls):
 
 
 class BaseTag(Extension):
-    def parse_attrs(self, parser, add_id=True):
+    def parse_attrs(self, parser, add_id=True, with_context=False):
         attrs = {}
         while parser.stream.current.type != 'block_end':
             node = parser.parse_assign_target(with_tuple=False)
@@ -55,6 +55,8 @@ class BaseTag(Extension):
                 attrs[node.name] = parser.parse_expression()
             else:
                 attrs[node.name] = nodes.Const(node.name)
+        if with_context:
+            attrs['ctx'] = nodes.ContextReference()
         return nodes.Dict([nodes.Pair(nodes.Const(k), v) for k,v in attrs.items()])
 
     def call_tag_func(self, *args, **kwargs):
@@ -96,6 +98,19 @@ class simple_tag(BaseTag):
         tag = parser.stream.next()
 
         attrs = self.parse_attrs(parser)
+
+        return nodes.Output([self.call_method('_call_simple_tag', args=[attrs])])
+
+    def _call_simple_tag(self, attrs):
+        return self.call_tag_func(**attrs)
+
+
+@create_extension_decorator
+class simple_context_tag(BaseTag):
+    def parse(self, parser):
+        tag = parser.stream.next()
+
+        attrs = self.parse_attrs(parser, with_context=True)
 
         return nodes.Output([self.call_method('_call_simple_tag', args=[attrs])])
 
