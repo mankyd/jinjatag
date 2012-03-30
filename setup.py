@@ -1,7 +1,10 @@
+import os
 import sys
 import setuptools
 
-import jinjatag
+from jinjatag.version import __version__
+
+here = os.path.dirname(__file__)
 
 requirements = [
     "jinja2>=2.5",
@@ -14,11 +17,11 @@ if version_tuple[0] < 3 and version_tuple[1] < 7:
 
 setuptools.setup(
     name = "jinjatag",
-    version = '.'.join(str(c) for c in jinjatag.__version__),
+    version = '.'.join(str(c) for c in __version__),
     author = "Dave Mankoff",
     author_email = "mankyd@gmail.com",
     description = "A library to make Jinja2 Extensions Easy",
-    long_description = open("README.md").read(),
+    long_description = open(os.path.join(here, "README.md")).read(),
     test_suite = 'jinjatag.tests.test_all',
     license = "GPLv3",
     url = "https://github.com/mankyd/jinjatag",
