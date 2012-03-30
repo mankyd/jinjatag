@@ -1,3 +1,6 @@
 from .version import __version__
-from .decorators import *
-from .extension import *
+try:
+    from .decorators import *
+    from .extension import *
+except ImportError:
+    pass
