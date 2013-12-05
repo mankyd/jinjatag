@@ -50,6 +50,24 @@ or, if you're so inclined:
     pip install jinjatag
 
 
+Using with Flask
+----------------
+
+To use jinjatag with flask you have to configure it like this: 
+
+``` python
+import jinjatag
+
+app = Flask(__name__)
+
+jinja_tag = jinjatag.JinjaTag()
+# jinja_options is an ImmutableDict, so we have to do this song and dance
+app.jinja_options = app.jinja_options.copy()
+app.jinja_options['extensions'].append(jinja_tag)
+jinja_tag.env = app.jinja_env
+jinja_tag.init() 
+```
+
 Further Documentation
 ----------------------
 
